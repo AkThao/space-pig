@@ -3,6 +3,7 @@ import random
 import time
 
 
+# These values need to be outside of any function or class to be seen by pgzero
 TITLE = "Space Pig"
 WIDTH = 800
 HEIGHT = 800
@@ -21,14 +22,17 @@ class Game:
         self.score = 0
         self.game_over = False
 
+        # Call the add_block method after every block_interval
         clock.schedule_interval(self.add_block, self.block_interval)
 
     def add_block(self):
         block = Actor("block")
+        # New block falls from the top at a random horizontal position
         block.pos = random.randrange(block.width / 2, WIDTH - (block.width / 2)), 0 - (block.height / 2)
         self.blocks.append(block)
 
     def reset_game(self):
+        # Stop the game for 2.0 seconds to show a game over message then reset the game
         self.game_over = True
         self.pig.image = "pig_square"
         clock.unschedule(self.add_block)
@@ -38,6 +42,7 @@ class Game:
 game = Game()
 
 
+# Used by pgzero
 def draw():
     screen.clear()
     game.pig.draw()
@@ -48,9 +53,10 @@ def draw():
         screen.draw.text("Game over!", center=(WIDTH / 2, HEIGHT / 2), fontname="bruce_forever", fontsize=50, color=(193, 127, 64), owidth=1, ocolor=(240, 240, 240))
 
 
+# Used by pgzero
 def update():
     if game.game_over == False:
-        # Basic pig movement
+        # Pig movement
         if keyboard.left:
             game.pig.x -=4
         elif keyboard.right:
@@ -69,6 +75,7 @@ def update():
                 game.blocks.remove(block)
                 game.score += 1
 
+        # collidelist stores a list of collisions, returns the index of the first collision and returns -1 if there are no collisions
         collision = game.pig.collidelist(game.blocks)
         if collision >= 0:
             game.reset_game()
